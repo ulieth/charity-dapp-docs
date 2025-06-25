@@ -10,8 +10,6 @@ Ensure you have:
 - ✅ Wallet connected with test SOL
 - ✅ At least one charity created (or use existing ones)
 
-If you need help with any of these, check the [Quick Start](quick-start.md) guide.
-
 ## Step-by-Step Donation Process
 
 ### Step 1: Navigate to Charities
@@ -42,7 +40,7 @@ Click **"Donate"** on any charity. This opens the donation modal.
 In the donation modal:
 
 1. **Amount field**: Enter `0.1` (for 0.1 SOL)
-2. **Review details**: 
+2. **Review details**:
    - Charity name and description
    - Your wallet address
    - Current SOL balance
@@ -134,71 +132,31 @@ Here's what executed in the Rust program:
 pub fn donate_sol(ctx: Context<DonateSol>, amount: u64) -> Result<()> {
     // 1. Verify donations aren't paused
     require!(!charity.paused, CustomError::DonationsPaused);
-    
+
     // 2. Transfer SOL to vault
     let transfer_instruction = system_instruction::transfer(
         donor.key, vault.key, amount
     );
-    
+
     // 3. Update charity stats
     charity.donation_count += 1;
     charity.donations_in_lamports += amount;
-    
+
     // 4. Record donation history
     donation.donor_key = donor.key();
     donation.amount_in_lamports = amount;
-    
+
     // 5. Emit event
     emit!(MakeDonationEvent { ... });
 }
 ```
 
-## Try Different Scenarios
-
-### Make Multiple Donations
-
-Try making several donations to see:
-- How donation count increases
-- How total amount accumulates
-- How donation history builds up
-
-### Donate to Different Charities
-
-If multiple charities exist:
-- Donate to different ones
-- Compare their stats
-- Check your donation history
-
-### Test Error Cases
-
-Try these to understand error handling:
-
-1. **Insufficient funds**: Try donating more SOL than you have
-2. **Invalid amount**: Try donating 0 SOL
-3. **Paused charity**: If you own a charity, pause it then try donating
-
-## Donation Best Practices
-
-### Amount Considerations
-
-- **Minimum**: Most charities accept any positive amount
-- **Fees**: Remember transaction fees (~0.00025 SOL)
-- **Testing**: Use small amounts (0.01-0.1 SOL) for testing
-
-### Security Notes
-
-- **Verify charity**: Check the charity details before donating
-- **Double-check amount**: Ensure you're donating the intended amount
-- **Wallet security**: Only approve transactions you understand
-
 ## What's Next?
 
 Now that you've made a donation, try:
 
-1. **[Create your own charity](../smart-contract/instructions.md#create-charity)**
-2. **[Explore charity management](../frontend/components.md#charity-management)**
-3. **[Understand the architecture](../architecture/README.md)**
-4. **[Learn about PDAs](../smart-contract/pdas.md)**
+1. **[Create your own charity](../smart-contract/instructions.md)**
+2. **[Learn about PDAs](https://solana.com/fr/docs/core/pda)**
 
 ## Troubleshooting
 

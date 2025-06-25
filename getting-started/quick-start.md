@@ -10,7 +10,7 @@ In your first terminal:
 
 ```bash
 # Navigate to project directory
-cd charity-dapp
+cd charity_dapp
 
 # Start the local Solana validator
 npm run local-validator
@@ -31,7 +31,7 @@ In a second terminal:
 
 ```bash
 # Navigate to project directory
-cd charity-dapp
+cd charity_dapp
 
 # Deploy the Anchor program
 npm run anchor::deploy
@@ -173,61 +173,6 @@ npm run airdrop
 # - Withdraw funds
 # - Check account page for history
 ```
-
-## Common Issues
-
-### Wallet Connection Failed
-
-- Ensure you have a wallet extension installed
-- Try refreshing the page
-- Check browser console for errors
-
-### Transaction Failed
-
-```bash
-# Check validator logs
-solana logs
-
-# Verify wallet has SOL
-solana balance
-
-# Airdrop more if needed
-npm run airdrop
-```
-
-### Program Not Found
-
-```bash
-# Redeploy the program
-npm run anchor::deploy
-
-# Check program is deployed
-solana program show $(cat anchor/target/deploy/charity-keypair.json | jq -r '.[0:32] | @base64')
-```
-
-### Frontend Build Errors
-
-```bash
-# Clear Next.js cache
-rm -rf .next
-
-# Reinstall dependencies
-rm -rf node_modules
-npm install
-
-# Restart dev server
-npm run dev
-```
-
-## Development Workflow
-
-For ongoing development:
-
-1. **Make changes** to smart contract (`anchor/programs/charity/src/`)
-2. **Rebuild**: `npm run anchor::build`
-3. **Test changes**: `npm run anchor::test`
-4. **Redeploy**: `npm run anchor::deploy`
-5. **Frontend changes** auto-reload via hot reload
 
 ## Next Steps
 

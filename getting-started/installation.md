@@ -6,12 +6,12 @@ Now that you have all the prerequisites installed, let's clone the project and s
 
 ```bash
 # Clone the repository
-git clone https://github.com/iamramtin/charity-dapp.git
-cd charity-dapp
+git clone https://github.com/ulieth/charity_dapp.git
+cd charity_dapp
 
 # Or if you forked it
-git clone https://github.com/YOUR_USERNAME/charity-dapp.git
-cd charity-dapp
+git clone https://github.com/YOUR_USERNAME/charity_dapp.git
+cd charity_dapp
 ```
 
 ## Install Dependencies
@@ -140,14 +140,14 @@ charity-dapp/
 │   ├── programs/charity/src/     # Rust smart contract source
 │   ├── target/deploy/            # Compiled program files
 │   ├── tests/                    # Program tests
-│   └── Anchor.toml              # Anchor configuration
+│   └── Anchor.toml               # Anchor configuration
 ├── src/
 │   ├── app/                     # Next.js app pages
 │   ├── components/              # React components
 │   └── lib/                     # Utility functions
 ├── scripts/                     # Build and utility scripts
-├── node_modules/               # Node.js dependencies
-└── package.json               # Project configuration
+├── node_modules/                # Node.js dependencies
+└── package.json                 # Project configuration
 ```
 
 ## Troubleshooting
