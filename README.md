@@ -11,7 +11,6 @@ This documentation showcases a complete Solana development project, from smart c
 - **Smart Contract Development**: Rust-based Anchor programs with comprehensive instruction handling
 - **Frontend Development**: Modern React/Next.js application with TypeScript
 - **Blockchain Integration**: Solana wallet connectivity and transaction management
-- **Testing Strategies**: Complete test coverage for both on-chain and off-chain components
 - **Deployment Pipeline**: From local development to production deployment
 
 ## 📚 Documentation Structure
@@ -22,7 +21,6 @@ This documentation showcases a complete Solana development project, from smart c
 - **[Frontend](frontend/README.md)** - Explore the React application
 - **[API Integration](api-integration/README.md)** - Learn about Solana RPC integration
 - **[Deployment](deployment/README.md)** - Deploy to testnet and mainnet
-- **[Advanced Topics](advanced/README.md)** - Performance, security, and scaling
 
 ## 🎯 Project Overview
 
