@@ -89,24 +89,6 @@ For the full user experience, install a browser wallet:
 - **[Solflare](https://solflare.com/)** - Feature-rich wallet
 - **[Backpack](https://backpack.app/)** - Modern wallet with great UX
 
-## Development Environment
-
-### 7. Git
-
-Version control is essential for development.
-
-```bash
-# Install Git (if not already installed)
-# macOS: git is included with Xcode Command Line Tools
-xcode-select --install
-
-# Ubuntu/Debian
-sudo apt-get install git
-
-# Verify installation
-git --version
-```
-
 ## Next Steps
 
 Once all prerequisites are installed, continue to the [Installation](installation.md) guide to clone and set up the project.
