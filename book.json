@@ -19,7 +19,8 @@
     "toggle-chapters",
     "page-toc-button",
     "back-to-top-button",
-    "theme-comscore"
+    "theme-comscore",
+    "mermaid-gb3"
   ],
   "pluginsConfig": {
     "github": {
