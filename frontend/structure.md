@@ -35,27 +35,18 @@ src/app/
 ├── globals.css                 # Global CSS styles
 ├── charity/                    # Charity routes
 │   ├── page.tsx               # Charity listing page
-│   ├── loading.tsx            # Charity loading state
-│   ├── [charityId]/           # Dynamic charity routes
-│   │   ├── page.tsx          # Charity detail page
-│   │   ├── edit/             # Edit charity route
-│   │   │   └── page.tsx
-│   │   └── donations/        # Donation history
-│   │       └── page.tsx
-│   └── create/                # Create charity route
-│       └── page.tsx
+│   └── [charityId]/           # Dynamic charity routes
+│       └── page.tsx          # Charity detail page
 ├── account/                   # Account management
 │   ├── page.tsx              # Account overview
-│   ├── donations/            # User's donation history
-│   │   └── page.tsx
-│   └── charities/            # User's managed charities
+│   └── [address]/            # Dynamic account routes
 │       └── page.tsx
-├── api/                      # API routes (if needed)
-│   └── health/
-│       └── route.ts
-└── (auth)/                   # Route groups for authenticated pages
-    └── dashboard/
-        └── page.tsx
+├── clusters/                 # Network cluster selection
+│   └── page.tsx
+└── api/                      # API routes
+    └── actions/
+        ├── const.ts
+        └── route.ts
 ```
 
 ## Components Structure (`src/components/`)
@@ -315,7 +306,7 @@ import { AnchorProvider, Program } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import { CharityIDL } from './charity-idl';
 
-export const CHARITY_PROGRAM_ID = new PublicKey('YOUR_PROGRAM_ID_HERE');
+export const CHARITY_PROGRAM_ID = new PublicKey('9MipEJLetsngpXJuyCLsSu3qTJrHQ6E6W1rZ1GrG68am');
 
 export function getCharityProgram(provider: AnchorProvider) {
   return new Program(CharityIDL, CHARITY_PROGRAM_ID, provider);

@@ -76,8 +76,6 @@ pub struct CreateCharityEvent {
     pub charity_key: Pubkey,
     pub charity_name: String,
     pub description: String,
-    pub authority: Pubkey,
-    pub vault_key: Pubkey,
     pub created_at: i64,
 }
 
@@ -85,9 +83,7 @@ pub struct CreateCharityEvent {
 pub struct UpdateCharityEvent {
     pub charity_key: Pubkey,
     pub charity_name: String,
-    pub old_description: String,
-    pub new_description: String,
-    pub authority: Pubkey,
+    pub description: String,
     pub updated_at: i64,
 }
 
@@ -95,9 +91,8 @@ pub struct UpdateCharityEvent {
 pub struct DeleteCharityEvent {
     pub charity_key: Pubkey,
     pub charity_name: String,
-    pub authority: Pubkey,
-    pub final_balance: u64,
     pub deleted_at: i64,
+    pub withdrawn_to_recipient: bool,
 }
 
 #[event]
@@ -105,7 +100,6 @@ pub struct PauseDonationsEvent {
     pub charity_key: Pubkey,
     pub charity_name: String,
     pub paused: bool,
-    pub authority: Pubkey,
     pub updated_at: i64,
 }
 ```
@@ -119,20 +113,15 @@ pub struct MakeDonationEvent {
     pub charity_key: Pubkey,
     pub charity_name: String,
     pub amount: u64,
-    pub donation_key: Pubkey,
-    pub total_donations: u64,
-    pub donation_count: u32,
     pub created_at: i64,
 }
 
 #[event]
-pub struct WithdrawDonationsEvent {
+pub struct WithdrawCharitySolEvent {
     pub charity_key: Pubkey,
     pub charity_name: String,
-    pub authority: Pubkey,
-    pub recipient: Pubkey,
-    pub amount: u64,
-    pub remaining_balance: u64,
+    pub donations_in_lamports: u64,
+    pub donation_count: u64,
     pub withdrawn_at: i64,
 }
 ```
@@ -254,25 +243,28 @@ pub fn update_charity(
 ```rust
 #[error_code]
 pub enum CustomError {
-    #[msg("Unauthorized: Only charity authority can perform this action")]
+    #[msg("Unauthorized access")]
     Unauthorized,
     
-    #[msg("Invalid name length: Name must be between 1 and 50 characters")]
+    #[msg("Invalid name length")]
     InvalidNameLength,
     
-    #[msg("Invalid description length: Description must be between 1 and 500 characters")]
+    #[msg("Invalid description length")]
     InvalidDescriptionLength,
+
+    #[msg("Invalid description")]
+    InvalidDescription,
     
-    #[msg("Donations are currently paused for this charity")]
+    #[msg("Donations for this charity are paused")]
     DonationsPaused,
     
     #[msg("Charity has been deleted and cannot accept donations")]
     CharityDeleted,
     
-    #[msg("Insufficient funds in vault for withdrawal")]
+    #[msg("Insufficient funds for withdrawal")]
     InsufficientFunds,
     
-    #[msg("Cannot withdraw below minimum rent-exempt balance")]
+    #[msg("Cannot withdraw below rent-exemption threshold")]
     InsufficientFundsForRent,
     
     #[msg("Donation amount must be greater than 0")]
@@ -281,8 +273,8 @@ pub enum CustomError {
     #[msg("Donation amount exceeds maximum allowed")]
     DonationAmountTooLarge,
     
-    #[msg("Arithmetic overflow occurred")]
-    OverflowError,
+    #[msg("Math overflow occurred")]
+    Overflow,
     
     #[msg("PDA derivation failed")]
     InvalidPDA,
@@ -290,8 +282,8 @@ pub enum CustomError {
     #[msg("Invalid charity PDA")]
     InvalidCharityPDA,
     
-    #[msg("Invalid vault PDA")]
-    InvalidVaultPDA,
+    #[msg("Invalid vault account")]
+    InvalidVaultAccount,
     
     #[msg("Invalid donation PDA")]
     InvalidDonationPDA,

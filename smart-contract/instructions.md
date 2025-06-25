@@ -24,8 +24,8 @@ Creates a new charity account with an associated vault for storing donations.
 ```rust
 pub fn create_charity(
     ctx: Context<CreateCharity>,
-    name: String,        // Charity name (1-50 characters)
-    description: String, // Charity description (1-200 characters)
+    name: String,        // Charity name (max 30 characters)
+    description: String, // Charity description (max 100 characters)
 ) -> Result<()>
 ```
 
@@ -62,8 +62,8 @@ pub struct CreateCharity<'info> {
 
 ### Validation Rules
 
-- **Name Length**: 1-50 characters
-- **Description Length**: 1-200 characters  
+- **Name Length**: Max 30 characters
+- **Description Length**: Max 100 characters  
 - **Uniqueness**: Each authority can only create one charity with a given name
 - **Rent**: Authority must have sufficient SOL for rent exemption
 
@@ -191,7 +191,6 @@ Allows charity authority to withdraw funds from the charity vault.
 pub fn withdraw_donations(
     ctx: Context<WithdrawDonations>,
     amount: u64,      // Amount in lamports to withdraw
-    recipient: Pubkey, // Address to receive the funds
 ) -> Result<()>
 ```
 
@@ -279,7 +278,7 @@ Updates the description of an existing charity.
 ```rust
 pub fn update_charity(
     ctx: Context<UpdateCharity>,
-    description: String, // New description (1-200 characters)
+    description: String, // New description (max 100 characters)
 ) -> Result<()>
 ```
 
@@ -304,7 +303,7 @@ pub struct UpdateCharity<'info> {
 
 - **Authority Check**: Only charity authority can update
 - **Charity Active**: Charity must not be deleted
-- **Description Length**: 1-200 characters
+- **Description Length**: Max 100 characters
 - **Content Validation**: Basic sanitization checks
 
 ### State Changes
@@ -423,7 +422,6 @@ Permanently removes a charity and withdraws all remaining funds.
 ```rust
 pub fn delete_charity(
     ctx: Context<DeleteCharity>,
-    recipient: Pubkey, // Address to receive remaining funds
 ) -> Result<()>
 ```
 

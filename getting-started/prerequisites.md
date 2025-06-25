@@ -56,9 +56,9 @@ Anchor simplifies Solana program development.
 # Install Anchor using AVM (Anchor Version Manager)
 cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
 
-# Install latest Anchor version
-avm install latest
-avm use latest
+# Install Anchor version 0.30.1 (used by this project)
+avm install 0.30.1
+avm use 0.30.1
 
 # Verify installation
 anchor --version
