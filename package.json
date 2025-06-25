@@ -1,0 +1,70 @@
+{
+  "name": "solana-charity-dapp-docs",
+  "version": "1.0.0",
+  "description": "Comprehensive documentation for the Solana Charity dApp - showcasing full-stack blockchain development",
+  "main": "README.md",
+  "scripts": {
+    "serve": "gitbook serve",
+    "build": "gitbook build",
+    "install-gitbook": "npm install gitbook-cli -g",
+    "init": "gitbook init",
+    "pdf": "gitbook pdf . ./solana-charity-dapp-docs.pdf",
+    "epub": "gitbook epub . ./solana-charity-dapp-docs.epub",
+    "mobi": "gitbook mobi . ./solana-charity-dapp-docs.mobi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/solana-charity-dapp-docs.git"
+  },
+  "keywords": [
+    "solana",
+    "blockchain",
+    "smart-contracts",
+    "anchor",
+    "rust",
+    "typescript",
+    "react",
+    "nextjs",
+    "web3",
+    "defi",
+    "charity",
+    "donations",
+    "documentation",
+    "gitbook",
+    "tutorial"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/solana-charity-dapp-docs/issues"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/solana-charity-dapp-docs#readme",
+  "devDependencies": {
+    "gitbook-cli": "^2.3.2"
+  },
+  "gitbook": {
+    "title": "Solana Charity dApp Documentation",
+    "description": "Complete guide to building a full-stack Solana dApp with Anchor, React, and TypeScript",
+    "author": "Your Name",
+    "language": "en",
+    "root": "./",
+    "plugins": [
+      "github",
+      "copy-code-button",
+      "prism",
+      "search-pro",
+      "splitter",
+      "summary"
+    ],
+    "pluginsConfig": {
+      "github": {
+        "url": "https://github.com/YOUR_USERNAME/solana-charity-dapp-docs"
+      },
+      "prism": {
+        "css": [
+          "prismjs/themes/prism-tomorrow.css"
+        ]
+      }
+    }
+  }
+}

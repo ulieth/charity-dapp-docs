@@ -1,0 +1,64 @@
+{
+  "title": "Solana Charity dApp Documentation",
+  "description": "Complete guide to building a full-stack Solana dApp with Anchor, React, and TypeScript",
+  "author": "Your Name",
+  "language": "en",
+  "gitbook": "3.2.3",
+  "root": "./",
+  "structure": {
+    "readme": "README.md",
+    "summary": "SUMMARY.md"
+  },
+  "plugins": [
+    "github",
+    "copy-code-button",
+    "prism",
+    "search-pro",
+    "splitter",
+    "anchors",
+    "toggle-chapters",
+    "page-toc-button",
+    "back-to-top-button",
+    "theme-comscore"
+  ],
+  "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/YOUR_USERNAME/solana-charity-dapp-docs"
+    },
+    "prism": {
+      "css": [
+        "prism-themes/themes/prism-material-oceanic.css"
+      ],
+      "lang": {
+        "rust": "rust",
+        "typescript": "typescript",
+        "javascript": "javascript",
+        "bash": "bash",
+        "json": "json"
+      }
+    },
+    "search-pro": {
+      "cutWordLib": "nodejieba",
+      "defineWord": ["Solana", "Anchor", "TypeScript", "React", "Next.js", "dApp", "blockchain"]
+    },
+    "theme-comscore": {
+      "showLevel": true
+    },
+    "page-toc-button": {
+      "maxTocDepth": 3,
+      "minTocSize": 2
+    }
+  },
+  "pdf": {
+    "pageNumbers": true,
+    "fontSize": 12,
+    "fontFamily": "Arial",
+    "paperSize": "a4",
+    "margin": {
+      "right": 62,
+      "left": 62,
+      "top": 56,
+      "bottom": 56
+    }
+  }
+}
