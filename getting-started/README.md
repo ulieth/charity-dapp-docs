@@ -23,41 +23,30 @@ This dApp consists of three main components:
 
 ```
 charity_dapp/
-├── 📁 scripts/               # Development automation scripts
-│   ├── airdrop.ts            # SOL airdrop utility for testing
-│   ├── seed.ts               # Blockchain seeding with test data
-│   ├── checkProgramId.ts     # Program ID validation utility
-│   ├── build_anchor.sh       # Anchor program build script
-│   ├── deploy_anchor.sh      # Anchor program deployment script
-│   └── test_anchor.sh        # Anchor program test runner
-├── 📁 anchor/                # Solana program (smart contract)
-│   ├── 📁 programs/charity/  # Main program source
-│   │   └── 📁 src/           # Rust source code
-│   │       ├── 📄 lib.rs     # Program entry point & instruction handlers
-│   │       ├── 📁 common/    # Shared utilities (constants, errors, events)
-│   │       ├── 📁 instructions/ # Program instructions (create, donate, withdraw, etc.)
-│   │       └── 📁 state/     # Account state definitions (charity, donation)
-│   ├── 📁 src/               # TypeScript client exports
-│   └── 📁 tests/             # Program tests
-└── 📁 src/                   # Next.js frontend application
-    ├── 📁 app/               # Next.js App Router
-    │   ├── 📄 layout.tsx     # Root layout with providers
-    │   ├── 📄 page.tsx       # Home page (charity listings)
-    │   ├── 📁 charity/       # Charity feature pages
-    │   ├── 📁 account/       # Account management pages
-    │   ├── 📁 clusters/      # Solana cluster management
-    │   └── 📁 api/           # API routes (Solana Actions)
-    └── 📁 components/        # Feature-based React components
-        ├── 📁 charity/       # Core charity functionality
-        │   ├── 📁 data-access/   # React Query hooks, PDA utilities
-        │   ├── 📁 feature/       # Page-level components
-        │   ├── 📁 types/         # TypeScript interfaces
-        │   ├── 📁 ui/            # Reusable UI components
-        │   └── 📁 utils/         # Helper functions
-        ├── 📁 account/       # Solana account management
-        ├── 📁 cluster/       # Network management
-        ├── 📁 solana/        # Wallet and connection providers
-        └── 📁 ui/            # Global UI components
+├── 📁 scripts/                   # Development automation scripts
+│   ├── airdrop.ts               # SOL airdrop utility for testing
+│   ├── seed.ts                  # Blockchain seeding with test data
+│   ├── checkProgramId.ts        # Program ID validation utility
+│   ├── build_anchor.sh          # Anchor program build script
+│   ├── deploy_anchor.sh         # Anchor program deployment script
+│   └── test_anchor.sh           # Anchor program test runner
+├── 📁 anchor/                    # Solana program (smart contract)
+│   ├── 📁 programs/charity/      # Main program source
+│   │   └── 📁 src/               # Rust source code
+│   │       ├── lib.rs           # Program entry point & instruction handlers
+│   │       ├── 📁 common/        # Shared utilities (constants, errors, events)
+│   │       ├── 📁 instructions/  # Program instructions (create, donate, withdraw, etc.)
+│   │       └── 📁 state/         # Account state definitions (charity, donation)
+│   └── 📁 tests/                 # Program tests
+└── 📁 src/                       # Next.js frontend application
+    ├── 📁 app/                   # Next.js App Router
+    └── 📁 components/            # Feature-based React components
+        └── 📁 charity/           # Core charity functionality
+            ├── 📁 data-access/   # React Query hooks, PDA utilities
+            ├── 📁 feature/       # Page-level components
+            ├── 📁 types/         # TypeScript interfaces
+            ├── 📁 ui/            # Reusable UI components
+            └── 📁 utils/         # Helper functions
 ```
 
 ## Key Features
