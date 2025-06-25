@@ -2,7 +2,21 @@
 
 This section provides a detailed overview of how the Anchor program is organized, including file structure, module organization, and code architecture patterns.
 
+## Why Program Structure Matters
+
+A well-organized smart contract structure is crucial for several reasons:
+
+**Security**: Clear separation of concerns makes it easier to audit and verify that each component handles only its intended responsibilities, reducing attack surfaces.
+
+**Maintainability**: Modular code organization allows developers to understand, modify, and extend specific functionality without affecting other parts of the system.
+
+**Reusability**: Common utilities, error handling, and validation logic can be shared across different instructions, reducing code duplication and potential bugs.
+
+**Clarity**: When dealing with financial transactions and user funds, every component's purpose must be immediately clear to prevent costly mistakes.
+
 ## Directory Structure
+
+The program follows a clean modular structure that separates different concerns:
 
 ```
 anchor/programs/charity/src/
@@ -26,7 +40,19 @@ anchor/programs/charity/src/
     └── events.rs          # Event definitions
 ```
 
+### Structure Rationale
+
+**`lib.rs`** - Serves as the program's main entry point where all instructions are exposed. This centralized approach ensures all program functionality is accessible through a single interface, making it easier for clients to interact with the contract.
+
+**`instructions/`** - Contains individual instruction handlers, each in its own file. This separation allows each instruction to be developed, tested, and audited independently, while the module system ensures clean imports and exports.
+
+**`state/`** - Defines the data structures that persist on the blockchain. Keeping state definitions separate makes it clear what data the program manages and how it's structured, which is crucial for understanding storage costs and account relationships.
+
+**`common/`** - Houses shared utilities like constants, errors, and events. This prevents code duplication and ensures consistent behavior across all instructions, particularly important for error handling and validation logic.
+
 ## Main Program Entry Point (`lib.rs`)
+
+The main entry point consolidates all program functionality and handles the critical business logic for each instruction. Rather than delegating to separate handler functions, all instruction logic is implemented directly here for simplicity and clarity.
 
 ```rust
 use anchor_lang::prelude::*;
@@ -284,9 +310,33 @@ pub mod charity {
 }
 ```
 
+### Key Design Decisions in lib.rs
+
+**Direct Implementation**: Each instruction contains its complete logic rather than calling external handlers. This approach makes the code more transparent and easier to audit, as all critical operations are visible in one place.
+
+**Input Validation**: Every instruction begins with thorough validation of inputs (name length, description length, amounts) to prevent invalid state and potential exploits.
+
+**Safe Arithmetic**: All mathematical operations use checked arithmetic to prevent overflow attacks, which could manipulate donation amounts or counters.
+
+**Event Emission**: Each state-changing operation emits events for transparency and off-chain monitoring, providing an audit trail of all contract activities.
+
+**State Consistency**: Operations that modify multiple fields (like donation tracking) ensure all related data is updated atomically to maintain consistency.
+
 ## Instruction Organization
 
+The instruction organization separates each operation into its own context definition and account validation rules.
+
 ### Instruction Module (`instructions/mod.rs`)
+
+The instruction module defines the account contexts that each instruction requires. These contexts specify exactly which accounts each instruction needs, their required permissions, and validation constraints.
+
+#### Why Separate Context Definitions?
+
+**Security**: Each instruction declares its exact account requirements upfront, making it impossible for malicious actors to pass unexpected accounts or gain unauthorized access.
+
+**Validation**: Account constraints are checked automatically by Anchor before instruction execution, preventing many common attack vectors.
+
+**Clarity**: Developers can immediately understand what accounts and permissions each instruction needs without reading through the implementation.
 
 ```rust
 // Public instruction handlers
@@ -307,6 +357,18 @@ pub use delete_charity::*;
 ```
 
 ### Example Instruction Structure (`instructions/create_charity.rs`)
+
+This example demonstrates how instruction contexts define security boundaries and account relationships. The `CreateCharity` context shows several important patterns used throughout the program.
+
+#### Understanding the CreateCharity Context
+
+**PDA (Program Derived Address) Usage**: The charity account uses a PDA derived from the authority's public key and charity name. This ensures that each authority can only create one charity with a given name, preventing duplicate names and establishing clear ownership.
+
+**Vault Separation**: The vault PDA is separate from the charity account. This design pattern separates data storage from fund storage, which is crucial for security - if the charity account somehow becomes corrupted, the funds remain safe in the vault.
+
+**Initialization Safety**: Both accounts use `init` constraints, meaning they must not already exist. This prevents overwriting existing data and ensures clean account creation.
+
+**Rent Considerations**: The `payer = authority` constraint ensures the charity creator pays for account rent, aligning costs with ownership.
 
 ```rust
 use anchor_lang::prelude::*;
@@ -391,9 +453,39 @@ pub fn handler(
 }
 ```
 
+#### The Vault Design Pattern
+
+The vault pattern used in this instruction is worth understanding in detail:
+
+**Why Not Store SOL in the Charity Account?**
+- Mixing data and funds in one account creates complexity
+- If the charity account needs to be modified (realloc), it could affect fund storage
+- Separate concerns make the system more robust and easier to audit
+
+**Security Benefits:**
+- Vault is owned by the program, not by users
+- Funds can only be moved through program instructions
+- Clear separation between metadata and actual assets
+
+**Gas Efficiency:**
+- Vault account has zero data space, minimizing rent costs
+- All metadata is stored efficiently in the charity account
+
 ## State Organization
 
+State organization defines how data persists on the blockchain and the relationships between different account types.
+
 ### State Module (`state/mod.rs`)
+
+The state module centralizes all account structure definitions, making it easy to understand what data the program manages and how it's organized.
+
+#### State Design Philosophy
+
+**Immutable History**: Donation records are never modified after creation, providing an immutable audit trail of all transactions.
+
+**Efficient Storage**: Field ordering and data types are chosen to minimize account size and rent costs while maintaining necessary functionality.
+
+**Clear Relationships**: Each account type has clear relationships to others (charity ↔ vault, charity ↔ donations) that are enforced at the program level.
 
 ```rust
 pub mod charity;
@@ -405,6 +497,22 @@ pub use donation::*;
 ```
 
 ### Charity State Structure (`state/charity.rs`)
+
+The charity account is the core data structure that maintains all metadata about a charity organization. Each field serves a specific purpose in the overall system design.
+
+#### Field-by-Field Rationale
+
+**authority**: Establishes ownership and control. Only this address can modify the charity or withdraw funds.
+
+**name & description**: Limited to 30 and 100 characters respectively to balance expressiveness with storage costs.
+
+**donations_in_lamports & donation_count**: Track financial metrics. Using lamports (smallest SOL unit) avoids floating-point precision issues.
+
+**paused**: Allows charity owners to temporarily stop accepting donations during emergencies or maintenance.
+
+**timestamps**: created_at, updated_at, deleted_at, withdrawn_at provide a complete audit trail of charity lifecycle events.
+
+**vault_bump**: Stores the PDA bump seed for the associated vault, enabling efficient vault address derivation without additional computation.
 
 ```rust
 use anchor_lang::prelude::*;
@@ -536,9 +644,43 @@ impl Donation {
 }
 ```
 
+### Space Optimization Strategy
+
+The space calculation demonstrates careful optimization for Solana's rent model:
+- Fixed-size fields (Pubkey, u64, i64, bool) have predictable costs
+- Variable strings use length prefixes (4 bytes) plus maximum content
+- Optional fields add 1 discriminator byte plus the wrapped type
+- Total space is calculated upfront to ensure rent-exemption
+
+This approach minimizes ongoing costs while ensuring accounts remain rent-exempt indefinitely.
+
+### Helper Methods Rationale
+
+The implementation includes several helper methods that encapsulate common business logic:
+
+**is_active()**: Provides a single source of truth for determining if a charity can accept donations.
+
+**average_donation()**: Calculates metrics safely, handling the division-by-zero case.
+
+**age_seconds()**: Enables time-based queries and analytics without exposing raw timestamp calculations.
+
+These methods abstract complex logic into simple, reusable functions that maintain consistency across the application.
+
 ## Common Utilities
 
+The common utilities module centralizes shared functionality that multiple instructions need, preventing code duplication and ensuring consistent behavior across the program.
+
 ### Constants (`common/constants.rs`)
+
+Constants define the operational parameters of the charity program. These values represent careful trade-offs between functionality and cost efficiency.
+
+#### Rationale for Chosen Limits
+
+**CHARITY_NAME_MAX_LEN: 30 characters** - Allows meaningful charity names while keeping storage costs reasonable. Most charity names fit comfortably within this limit.
+
+**CHARITY_DESCRIPTION_MAX_LEN: 100 characters** - Provides enough space for a brief mission statement while preventing abuse through excessive storage usage.
+
+These limits can be adjusted if needed, but changes would require program upgrades and migration of existing data.
 
 ```rust
 /// Maximum length for charity names
@@ -693,17 +835,66 @@ pub struct DeleteCharityEvent {
 }
 ```
 
+### Error Handling Philosophy
+
+The error definitions implement a comprehensive but focused approach to error handling:
+
+**Specific Error Types**: Each error corresponds to a specific failure mode, making debugging and user communication clearer.
+
+**Security-First**: Errors like `Unauthorized` and `InsufficientFunds` protect against common attack vectors.
+
+**User-Friendly**: Error messages are written to be understandable by end users, not just developers.
+
+**Fail-Fast**: The error system encourages early validation to catch problems before state changes occur.
+
+### Event System Design
+
+Events provide transparency and enable off-chain applications to track program activity:
+
+**Complete Coverage**: Every state-changing operation emits an event, creating a complete audit trail.
+
+**Structured Data**: Events include all relevant information needed for indexing and display in user interfaces.
+
+**Immutable Log**: Once emitted, events cannot be modified, providing trustworthy historical records.
+
+**Efficient Indexing**: Event structure is designed to enable efficient querying by various criteria (donor, charity, time period).
+
 ## Code Organization Patterns
 
+The overall code organization follows several consistent patterns that enhance security, maintainability, and clarity.
+
 ### Handler Pattern
-Each instruction follows a consistent pattern:
+
+Each instruction follows a consistent pattern that ensures security and maintainability:
+
 1. **Context Definition**: Account validation and constraints
-2. **Handler Function**: Business logic implementation
+2. **Handler Function**: Business logic implementation  
 3. **Input Validation**: Parameter checking and sanitization
 4. **State Updates**: Account data modifications
 5. **Event Emission**: Audit trail and notification
 
+#### Why This Pattern Works
+
+**Predictability**: Developers know exactly where to find validation, business logic, and state changes in any instruction.
+
+**Security**: The pattern enforces validation-first approach, preventing invalid operations from affecting state.
+
+**Auditability**: Each step is clearly separated, making security audits more systematic and thorough.
+
+**Debugging**: When issues arise, the structured pattern makes it easy to identify whether the problem is in validation, logic, or state management.
+
 ### Error Handling Pattern
+
+The error handling pattern prioritizes safety and clarity through consistent validation and meaningful error messages.
+
+#### Error Handling Philosophy
+
+**Fail Early**: Validate all inputs and preconditions before making any state changes.
+
+**Specific Errors**: Use descriptive error types that help users understand what went wrong.
+
+**Safe Propagation**: Use the `?` operator to propagate errors without losing context.
+
 ```rust
 // Consistent error handling throughout the program
 pub fn example_handler(ctx: Context<ExampleContext>) -> Result<()> {
@@ -722,6 +913,19 @@ pub fn example_handler(ctx: Context<ExampleContext>) -> Result<()> {
 ```
 
 ### PDA Derivation Pattern
+
+Program Derived Addresses (PDAs) create deterministic, unique addresses that the program controls. The consistent seed patterns ensure predictable address generation.
+
+#### PDA Design Rationale
+
+**Deterministic**: Same inputs always produce the same address, enabling clients to derive addresses independently.
+
+**Unique**: The combination of program ID, authority, and name ensures no address collisions.
+
+**Secure**: Only the program can sign for PDA addresses, preventing unauthorized access.
+
+**Hierarchical**: The seed structure creates logical relationships (charity → vault, charity → donations).
+
 ```rust
 // Consistent PDA seed patterns
 pub fn derive_charity_pda(authority: &Pubkey, name: &str) -> (Pubkey, u8) {
@@ -732,4 +936,13 @@ pub fn derive_charity_pda(authority: &Pubkey, name: &str) -> (Pubkey, u8) {
 }
 ```
 
-This structured approach ensures maintainable, secure, and efficient program development while following Anchor framework best practices.
+## Summary
+
+This structured approach ensures maintainable, secure, and efficient program development while following Anchor framework best practices. Each organizational choice serves specific purposes:
+
+- **Security** through clear separation of concerns and validation
+- **Efficiency** through optimized data structures and minimal rent costs  
+- **Transparency** through comprehensive event emission and error handling
+- **Maintainability** through consistent patterns and modular organization
+
+The result is a robust charity platform that handles user funds safely while providing clear interfaces for interaction and monitoring.

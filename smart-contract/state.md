@@ -2,15 +2,80 @@
 
 The Anchor program implements a sophisticated state management system that tracks charity information, donations, and program state across the Solana blockchain. This section covers account structures, lifecycle management, and state relationships.
 
+## Understanding Blockchain State
+
+Unlike traditional databases, blockchain state management has unique characteristics that shape how we design data structures:
+
+**Immutability**: Once written to the blockchain, data cannot be modified arbitrarily. Changes must be explicit and go through program instructions.
+
+**Cost Awareness**: Every byte stored on-chain incurs ongoing rent costs. Efficient data structures directly impact user costs.
+
+**Concurrent Safety**: Multiple users may interact with the program simultaneously. State transitions must be atomic and safe.
+
+**Transparency**: All state changes are publicly visible and auditable, making data integrity paramount.
+
+## Design Philosophy
+
+Our state management follows several key principles:
+
+**Separation of Concerns**: Financial data (SOL) is stored separately from metadata to minimize complexity and risk.
+
+**Audit Trail**: Critical events are timestamped and preserved, creating an immutable history of operations.
+
+**Predictable Costs**: Account sizes are calculated upfront to ensure rent-exemption and predictable user costs.
+
+**Security First**: State transitions are validated at every step to prevent invalid or malicious modifications.
+
 ## Account Overview
 
-The program manages three primary account types:
+The program manages three primary account types, each serving a specific purpose in the charity ecosystem:
 
 1. **Charity Account** - Core charity information and metadata
 2. **Donation Account** - Individual donation transaction records  
 3. **Vault Account** - SOL storage for charity funds
 
+### Account Relationship Model
+
+```
+┌─────────────────┐    owns    ┌─────────────────┐
+│   Authority     │─────────────│ Charity Account │
+│   (Wallet)      │             │   (Metadata)    │
+└─────────────────┘             └─────────────────┘
+                                        │
+                                   derives│
+                                        ▼
+                                ┌─────────────────┐
+                                │  Vault Account  │
+                                │   (SOL Funds)   │
+                                └─────────────────┘
+                                        ▲
+                                receives│
+                                        │
+┌─────────────────┐   creates   ┌─────────────────┐
+│    Donors       │─────────────│ Donation Records│
+│   (Wallets)     │             │   (History)     │
+└─────────────────┘             └─────────────────┘
+```
+
+This separation ensures that:
+- Metadata and funds are isolated for security
+- Donation history is preserved immutably  
+- Each account type can be optimized for its specific purpose
+
 ## Charity Account Structure
+
+The charity account serves as the central metadata store for each charity organization. It contains all the information needed to identify, manage, and track the charity without storing actual funds.
+
+### Design Rationale
+
+**Why Separate Metadata from Funds?**
+- Reduces complexity when updating charity information
+- Minimizes risk to funds during metadata operations  
+- Allows for more efficient account space usage
+- Enables atomic operations on either metadata or funds independently
+
+**Field Selection Rationale:**
+Each field in the charity account was chosen to serve specific operational or security needs while minimizing storage costs.
 
 ### Account Definition
 
@@ -31,7 +96,33 @@ pub struct Charity {
 }
 ```
 
+### Field-by-Field Analysis
+
+**authority (32 bytes)**: The Solana public key that owns and controls this charity. This establishes clear ownership and authorization for all charity operations.
+
+**name (4 + max 30 bytes)**: The charity's display name with a length prefix. Limited to 30 characters to balance expressiveness with storage efficiency.
+
+**description (4 + max 100 bytes)**: A brief mission statement. 100 characters provide enough space for meaningful descriptions while controlling costs.
+
+**donations_in_lamports (8 bytes)**: Total donations received in lamports (Solana's smallest unit). Using lamports avoids floating-point precision issues in financial calculations.
+
+**donation_count (8 bytes)**: Number of individual donations received. Helps calculate average donation size and provides usage metrics.
+
+**paused (1 byte)**: Emergency stop mechanism. Allows charity owners to temporarily halt donations during maintenance or emergencies.
+
+**created_at (8 bytes)**: Unix timestamp of charity creation. Enables age calculations and temporal queries.
+
+**updated_at (8 bytes)**: Unix timestamp of last modification. Tracks when charity information was last changed.
+
+**deleted_at (9 bytes)**: Optional timestamp of deletion. Soft deletion preserves historical data while marking the charity as inactive.
+
+**withdrawn_at (9 bytes)**: Optional timestamp of last withdrawal. Tracks when funds were last accessed by the charity.
+
+**vault_bump (1 byte)**: PDA bump seed for the associated vault. Enables efficient vault address derivation without recomputation.
+
 ### Space Calculation
+
+Understanding space calculation is crucial for rent optimization and cost predictability.
 
 ```rust
 impl Space for Charity {
