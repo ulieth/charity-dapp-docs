@@ -54,7 +54,12 @@
       "prism",
       "search-pro",
       "splitter",
-      "summary"
+      "anchors",
+      "toggle-chapters",
+      "page-toc-button",
+      "back-to-top-button",
+      "theme-comscore",
+      "mermaid-gb3"
     ],
     "pluginsConfig": {
       "github": {
@@ -62,8 +67,26 @@
       },
       "prism": {
         "css": [
-          "prismjs/themes/prism-tomorrow.css"
-        ]
+          "prism-themes/themes/prism-material-oceanic.css"
+        ],
+        "lang": {
+          "rust": "rust",
+          "typescript": "typescript",
+          "javascript": "javascript",
+          "bash": "bash",
+          "json": "json"
+        }
+      },
+      "search-pro": {
+        "cutWordLib": "nodejieba",
+        "defineWord": ["Solana", "Anchor", "TypeScript", "React", "Next.js", "dApp", "blockchain"]
+      },
+      "theme-comscore": {
+        "showLevel": true
+      },
+      "page-toc-button": {
+        "maxTocDepth": 3,
+        "minTocSize": 2
       }
     }
   },
