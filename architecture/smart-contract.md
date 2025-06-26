@@ -2,24 +2,6 @@
 
 The Solana Charity dApp's smart contract is built using the Anchor framework, providing a secure, efficient, and maintainable foundation for charity management and donations.
 
-## Core Design Principles
-
-### Security-First Architecture
-- **Access Control**: Role-based permissions for charity management
-- **Input Validation**: Comprehensive validation of all parameters  
-- **Error Handling**: Detailed error messages and proper error propagation
-- **Rent Protection**: Ensures accounts maintain rent-exempt balances
-
-### Gas Efficiency
-- **Optimized Account Structures**: Minimal data storage for cost efficiency
-- **Batch Operations**: Multiple state updates in single transactions
-- **Efficient PDAs**: Streamlined Program Derived Address derivation
-
-### Transparency & Auditability
-- **Event Logging**: All operations emit events for off-chain indexing
-- **Immutable History**: Transaction history preserved on-chain
-- **Open Source**: Fully auditable codebase
-
 ## Program Structure
 
 The smart contract consists of six core instructions:
@@ -47,40 +29,6 @@ pub struct Charity {
     pub vault_bump: u8,                 // 1 byte - PDA bump seed
 }
 ```
-
-### Program Derived Addresses (PDAs)
-
-**Charity PDA**: `[b"charity", authority.key(), name.as_bytes()]`
-- Unique charity identification per authority
-- Prevents name collisions
-
-**Vault PDA**: `[b"vault", charity_pda.key()]` 
-- Secure fund storage
-- Program-owned account for donations
-
-**Donation PDA**: `[b"donation", donor.key(), charity.key(), timestamp]`
-- Individual donation tracking
-- Temporal ordering of donations
-
-## Security Features
-
-### Access Control Matrix
-
-| Operation | Authority | Donor | Public |
-|-----------|-----------|--------|---------|
-| Create Charity | ✅ | ❌ | ❌ |
-| Update Charity | ✅ (own) | ❌ | ❌ |
-| Delete Charity | ✅ (own) | ❌ | ❌ |
-| Pause Donations | ✅ (own) | ❌ | ❌ |
-| Withdraw Funds | ✅ (own) | ❌ | ❌ |
-| Donate | ✅ | ✅ | ✅ |
-| View Charity | ✅ | ✅ | ✅ |
-
-### Validation Layers
-- Business logic validation (e.g., donations not paused)
-- Financial validation (sufficient funds)
-- State consistency validation
-- Rent exemption protection
 
 ## Error Handling
 

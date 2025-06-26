@@ -16,11 +16,40 @@ The system follows a three-tier architecture with a Rust/Anchor smart contract l
 
 A Rust/Anchor Solana program managing charity accounts, donations, withdrawals, and transparent event logging.
 
+The Solana Charity dApp's smart contract is built using the Anchor framework, providing a secure, efficient, and maintainable foundation for charity management and donations.
+
+The smart contract consists of six core instructions:
+
+1. **create_charity**: Initialize new charity with vault
+2. **donate_sol**: Transfer SOL from donor to charity vault
+3. **withdraw_donations**: Transfer funds from vault to authority
+4. **update_charity**: Modify charity description
+5. **pause_donations**: Toggle donation acceptance
+6. **delete_charity**: Remove charity and withdraw remaining funds
+
+#### Error Handling
+
+Custom error types provide clear feedback:
+- `Unauthorized`: Access control violations
+- `InvalidNameLength`: Input validation failures
+- `DonationsPaused`: Business rule violations
+- `InsufficientFunds`: Financial constraint violations
+
+#### Event System
+
+Events enable real-time updates and off-chain indexing:
+- `CreateCharityEvent`: New charity creation
+- `MakeDonationEvent`: Donation transactions
+- `WithdrawDonationsEvent`: Fund withdrawals
+- `UpdateCharityEvent`: Charity modifications
+
+This architecture ensures secure, transparent, and efficient charity management on the Solana blockchain.
+
 ### 2. Frontend Application (TypeScript/React)
 
 **Location**: `src/`
 
-A modern React application built with Next.js 14, showcasing contemporary web development practices.
+The charity dApp frontend is a modern React application built with Next.js 14, showcasing contemporary web development practices and seamless blockchain integration. Solana Provider provides blockchain connectivity to the entire application through context providers for wallet connection, network selection, and program interaction. Charity Data Access centralizes all charity-related blockchain operations with React Query for caching and synchronization.
 
 ### 3. Data Access Layer
 
@@ -48,12 +77,17 @@ The application uses PDAs for deterministic account addresses:
 
 ```rust
 // Charity PDA
+// Unique charity identification per authority
+// Prevents name collisions
 [b"charity", authority.key().as_ref(), name.as_bytes()] -> Charity Account
 
 // Vault PDA
+// Secure fund storage
+// Program-owned account for donations
 [b"vault", charity.key().as_ref()] -> Vault Account
 
 // Donation PDA
+// Individual donation tracking
 [b"donation", donor.key(), charity.key(), &charity.donation_count.to_le_bytes()] -> Donation Record
 ```
 
@@ -66,25 +100,6 @@ The diagram shows how accounts are connected: Authority Wallets create and contr
 ## Security Architecture
 
 The system ensures security through authority-based access control, program-owned fund storage, immutable smart contract logic, and transparent on-chain operations with full public auditability.
-
-## State Management
-
-### On-Chain State
-
-```rust
-// Charity account structure
-pub struct Charity {
-    pub authority: Pubkey,           // Owner's wallet
-    pub name: String,                // Charity name
-    pub description: String,         // Description
-    pub donations_in_lamports: u64,  // Total raised
-    pub donation_count: u32,         // Number of donations
-    pub paused: bool,                // Donation status
-    pub created_at: i64,             // Creation timestamp
-    pub updated_at: i64,             // Last update
-    pub vault_bump: u8,              // PDA bump seed
-}
-```
 
 ## Next Steps
 

@@ -14,8 +14,6 @@
 
 * [System Overview](architecture/README.md)
 * [Smart Contract Architecture](architecture/smart-contract.md)
-* [Frontend Architecture](architecture/frontend.md)
-* [Data Flow](architecture/data-flow.md)
 * [Security Model](architecture/security.md)
 
 ## Smart Contract
