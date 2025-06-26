@@ -51,19 +51,3 @@
 * [Testnet Deployment](deployment/testnet.md)
 * [Production Deployment](deployment/production.md)
 * [Monitoring](deployment/monitoring.md)
-
-## Advanced Topics
-
-* [Advanced Concepts](advanced/README.md)
-* [Performance Optimization](advanced/performance.md)
-* [Scalability](advanced/scalability.md)
-* [Security Best Practices](advanced/security.md)
-* [Future Enhancements](advanced/future.md)
-* [Lessons Learned](advanced/lessons.md)
-
-## Reference
-
-* [API Reference](reference/api.md)
-* [Code Examples](reference/examples.md)
-* [Troubleshooting](reference/troubleshooting.md)
-* [Glossary](reference/glossary.md)
