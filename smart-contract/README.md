@@ -291,32 +291,6 @@ emit!(CreateCharityEvent {
 });
 ```
 
-## Testing Architecture
-
-### Test Structure
-
-**Basic test module structure using Tokio async runtime:**
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use anchor_lang::prelude::*;
-    use solana_program_test::*;
-
-    #[tokio::test]
-    async fn test_create_charity() {
-        // Test implementation
-    }
-}
-```
-
-### Testing Patterns
-
-- **Setup**: Initialize program and accounts
-- **Execute**: Call program instruction
-- **Verify**: Check account states and events
-- **Cleanup**: Reset for next test
-
 ## Performance Optimizations
 
 ### Account Sizing
@@ -333,56 +307,5 @@ mod tests {
 )]
 pub charity: Account<'info, Charity>,
 ```
-
-### Efficient Operations
-
-- **Bulk Updates**: Multiple state changes in single instruction
-- **Optimized PDAs**: Minimal seeds for faster derivation
-- **Direct Lamport Manipulation**: Avoids system program calls
-
-## Integration Points
-
-### TypeScript Client
-
-Anchor automatically generates TypeScript client code:
-
-**TypeScript client method call using generated program interface:**
-```typescript
-// Generated client usage
-const tx = await program.methods
-  .createCharity(name, description)
-  .accounts({
-    authority: wallet.publicKey,
-  })
-  .rpc();
-```
-
-### IDL (Interface Definition Language)
-
-**JSON structure defining program interface for client generation:**
-```json
-{
-  "instructions": [
-    {
-      "name": "createCharity",
-      "accounts": [...],
-      "args": [
-        {"name": "name", "type": "string"},
-        {"name": "description", "type": "string"}
-      ]
-    }
-  ]
-}
-```
-
-## Next Topics
-
-Explore specific aspects of the smart contract:
-
-- **[Program Structure](structure.md)** - Detailed code organization
-- **[Instructions](instructions.md)** - Deep dive into each instruction
-- **[State Management](state.md)** - Account lifecycle and relationships
-- **[PDAs and Accounts](pdas.md)** - Address derivation and account management
-- **[Testing](testing.md)** - Comprehensive testing strategies
 
 The Anchor program demonstrates production-ready Solana development with proper security, error handling, and optimization techniques.
