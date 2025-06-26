@@ -22,21 +22,3 @@
 * [Instructions](smart-contract/instructions.md)
 * [State Management](smart-contract/state.md)
 * [Testing](smart-contract/testing.md)
-
-## Frontend Development
-
-* [Next.js Application](frontend/README.md)
-* [Project Structure](frontend/structure.md)
-* [Solana Integration](frontend/solana-integration.md)
-* [Component Architecture](frontend/components.md)
-* [State Management](frontend/state-management.md)
-* [UI/UX Design](frontend/ui-ux.md)
-* [Error Handling](frontend/error-handling.md)
-
-## Deployment
-
-* [Deployment Guide](deployment/README.md)
-* [Local Development](deployment/local.md)
-* [Testnet Deployment](deployment/testnet.md)
-* [Production Deployment](deployment/production.md)
-* [Monitoring](deployment/monitoring.md)
