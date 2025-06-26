@@ -59,7 +59,7 @@ Transfers SOL from donor to charity vault.
 
 ```rust
 pub fn donate_sol(
-    ctx: Context<DonateSol>, 
+    ctx: Context<DonateSol>,
     amount: u64
 ) -> Result<()>
 ```
@@ -77,7 +77,7 @@ Allows charity authority to withdraw funds.
 
 ```rust
 pub fn withdraw_donations(
-    ctx: Context<WithdrawDonations>, 
+    ctx: Context<WithdrawDonations>,
     amount: u64
 ) -> Result<()>
 ```
@@ -95,7 +95,7 @@ Toggles donation acceptance for emergency situations.
 
 ```rust
 pub fn pause_donations(
-    ctx: Context<PauseDonations>, 
+    ctx: Context<PauseDonations>,
     paused: bool
 ) -> Result<()>
 ```
@@ -106,7 +106,7 @@ Allows charity authority to update description.
 
 ```rust
 pub fn update_charity(
-    ctx: Context<UpdateCharity>, 
+    ctx: Context<UpdateCharity>,
     description: String
 ) -> Result<()>
 ```
@@ -203,49 +203,9 @@ let (donation_pda, bump) = Pubkey::find_program_address(
         b"donation",
         donor.key().as_ref(),
         charity.key().as_ref(),
-        timestamp.to_le_bytes().as_ref()
+        &charity.donation_count.to_le_bytes(),
     ],
     program_id
-);
-```
-
-## Security Features
-
-### Access Control
-
-```rust
-// Only charity authority can manage charity
-#[account(
-    mut,
-    has_one = authority @ CustomError::Unauthorized
-)]
-pub charity: Account<'info, Charity>,
-```
-
-### Input Validation
-
-```rust
-// Validate string lengths
-require!(
-    name.len() <= CHARITY_NAME_MAX_LEN,
-    CustomError::InvalidNameLength
-);
-
-// Validate amounts
-require!(
-    amount > 0 && vault_balance >= amount,
-    CustomError::InsufficientFunds
-);
-```
-
-### Rent Protection
-
-```rust
-// Ensure rent-exempt balance remains
-let min_rent = rent.minimum_balance(0);
-require!(
-    vault_balance.checked_sub(amount).unwrap_or(0) >= min_rent,
-    CustomError::InsufficientFundsForRent
 );
 ```
 
@@ -258,13 +218,13 @@ require!(
 pub enum CustomError {
     #[msg("Unauthorized: Only charity authority can perform this action")]
     Unauthorized,
-    
+
     #[msg("Invalid name length: Name must be between 1 and 50 characters")]
     InvalidNameLength,
-    
+
     #[msg("Donations are currently paused for this charity")]
     DonationsPaused,
-    
+
     #[msg("Insufficient funds for this operation")]
     InsufficientFunds,
 }
@@ -326,7 +286,7 @@ mod tests {
     use super::*;
     use anchor_lang::prelude::*;
     use solana_program_test::*;
-    
+
     #[tokio::test]
     async fn test_create_charity() {
         // Test implementation

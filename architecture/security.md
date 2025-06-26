@@ -6,56 +6,44 @@ The charity dApp implements security through access control constraints that ens
 
 When creating contexts with new state, the smart contract implements specific constraints to restrict who can perform certain actions. For example, only the charity owner can update charity details or withdraw donations.
 
-## Authority-Based Access Control
+## Security Features
+
+### Access Control
 
 ```rust
-// Only charity owners can update their charity
-#[derive(Accounts)]
-pub struct UpdateCharity<'info> {
-    #[account(
-        mut,
-        has_one = authority @ CustomError::Unauthorized,
-        seeds = [b"charity", authority.key().as_ref(), charity.name.as_bytes()],
-        bump = charity.vault_bump
-    )]
-    pub charity: Account<'info, Charity>,
-
-    pub authority: Signer<'info>,
-}
-
-pub fn update_charity(
-    ctx: Context<UpdateCharity>,
-    description: String,
-) -> Result<()> {
-    let charity = &mut ctx.accounts.charity;
-
-    // Only the charity owner (authority) can update
-    charity.description = description;
-    charity.updated_at = Clock::get()?.unix_timestamp;
-
-    Ok(())
-}
+// Only charity authority can manage charity
+#[account(
+    mut,
+    has_one = authority
+)]
+pub charity: Account<'info, Charity>,
 ```
 
-## Withdrawal Constraints
+### Input Validation
 
 ```rust
-// Only charity owners can withdraw donations
-pub fn withdraw_donations(
-    ctx: Context<WithdrawDonations>,
-    amount: u64,
-) -> Result<()> {
-    let charity = &mut ctx.accounts.charity;
-    let vault = &mut ctx.accounts.vault;
+// Validate string lengths
+require!(
+    name.len() <= CHARITY_NAME_MAX_LEN,
+    CustomError::InvalidNameLength
+);
 
-    // Authority constraint ensures only owner can withdraw
-    **vault.to_account_info().try_borrow_mut_lamports()? -= amount;
-    **ctx.accounts.authority.to_account_info().try_borrow_mut_lamports()? += amount;
+// Validate amounts
+require!(
+    amount > 0 && vault_balance >= amount,
+    CustomError::InsufficientFunds
+);
+```
 
-    charity.withdrawn_at = Some(Clock::get()?.unix_timestamp);
+### Rent Protection
 
-    Ok(())
-}
+```rust
+// Ensure rent-exempt balance remains
+let min_rent = rent.minimum_balance(0);
+require!(
+    vault_balance.checked_sub(amount).unwrap_or(0) >= min_rent,
+    CustomError::InsufficientFundsForRent
+);
 ```
 
 ## Key Security Features
