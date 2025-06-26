@@ -20,7 +20,7 @@
     "page-toc-button",
     "back-to-top-button",
     "theme-comscore",
-    "mermaid-gb3"
+    "mermaid"
   ],
   "pluginsConfig": {
     "github": {
@@ -48,6 +48,9 @@
     "page-toc-button": {
       "maxTocDepth": 3,
       "minTocSize": 2
+    },
+    "mermaid": {
+      "theme": "default"
     }
   },
   "pdf": {
