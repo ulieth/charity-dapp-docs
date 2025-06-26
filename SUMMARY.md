@@ -23,7 +23,6 @@
 * [Instructions](smart-contract/instructions.md)
 * [State Management](smart-contract/state.md)
 * [PDAs and Accounts](smart-contract/pdas.md)
-* [Events and Errors](smart-contract/events-errors.md)
 * [Testing](smart-contract/testing.md)
 
 ## Frontend Development
@@ -35,14 +34,6 @@
 * [State Management](frontend/state-management.md)
 * [UI/UX Design](frontend/ui-ux.md)
 * [Error Handling](frontend/error-handling.md)
-
-## API Integration
-
-* [Solana RPC](api-integration/README.md)
-* [Wallet Integration](api-integration/wallet.md)
-* [Transaction Handling](api-integration/transactions.md)
-* [Data Fetching](api-integration/data-fetching.md)
-* [Real-time Updates](api-integration/real-time.md)
 
 ## Deployment
 

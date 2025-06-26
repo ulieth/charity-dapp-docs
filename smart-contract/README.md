@@ -222,6 +222,8 @@ let (donation_pda, bump) = Pubkey::find_program_address(
 
 ## Error Handling
 
+Each error type addresses specific failure modes that users or attackers might encounter.
+
 ### Custom Error Types
 
 **Enum defining all possible program errors with descriptive messages:**
@@ -255,6 +257,8 @@ pub fn donate_sol(ctx: Context<DonateSol>, amount: u64) -> Result<()> {
 ```
 
 ## Event System
+
+The Anchor program implements comprehensive event emission and error handling to ensure transparency, debugging capability, and proper error communication. This section covers the event system and error management patterns. These events track the lifecycle of charity organizations from creation to deletion.
 
 ### Event Definitions
 
