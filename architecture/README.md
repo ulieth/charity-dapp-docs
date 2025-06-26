@@ -4,36 +4,7 @@ The Solana Charity dApp is built with a modern, scalable architecture that demon
 
 ## High-Level Architecture
 
-```mermaid
-graph TB
-    subgraph "Frontend Layer"
-        UI[React/Next.js UI]
-        Components[Component Library]
-        Hooks[Custom Hooks]
-    end
-    
-    subgraph "Integration Layer"
-        WalletAdapter[Wallet Adapter]
-        AnchorClient[Anchor Client]
-        ReactQuery[React Query]
-    end
-    
-    subgraph "Blockchain Layer"
-        Program[Charity Program]
-        Accounts[On-chain Accounts]
-        SOL[Solana Runtime]
-    end
-    
-    UI --> Components
-    Components --> Hooks
-    Hooks --> WalletAdapter
-    Hooks --> AnchorClient
-    AnchorClient --> ReactQuery
-    WalletAdapter --> Program
-    AnchorClient --> Program
-    Program --> Accounts
-    Accounts --> SOL
-```
+![High-Level Architecture](../assets/high-level-architecture.png)
 
 ## Core Components
 
@@ -41,14 +12,7 @@ graph TB
 
 **Location**: `anchor/programs/charity/`
 
-The heart of the application is a Solana program written in Rust using the Anchor framework.
-
-**Key Features**:
-- Charity account management
-- Secure donation handling
-- Fund withdrawal mechanisms
-- Event logging for transparency
-- Comprehensive error handling
+A Rust/Anchor Solana program managing charity accounts, donations, withdrawals, and transparent event logging.
 
 **Program Structure**:
 ```rust
@@ -89,26 +53,7 @@ Custom React hooks that abstract blockchain interactions and provide a clean API
 
 ### Donation Flow Example
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant Wallet
-    participant Program
-    participant Blockchain
-    
-    User->>Frontend: Click "Donate"
-    Frontend->>Frontend: Validate amount
-    Frontend->>Wallet: Request signature
-    Wallet->>User: Show transaction
-    User->>Wallet: Approve
-    Wallet->>Program: Submit transaction
-    Program->>Program: Validate donation
-    Program->>Blockchain: Transfer SOL
-    Program->>Blockchain: Update accounts
-    Blockchain->>Frontend: Confirm transaction
-    Frontend->>User: Show success
-```
+![Donation Flow](../assets/donation-flow.png)
 
 ## Account Architecture
 
@@ -120,7 +65,7 @@ The application uses PDAs for deterministic account addresses:
 // Charity PDA
 [b"charity", authority.key(), name.as_bytes()] -> Charity Account
 
-// Vault PDA  
+// Vault PDA
 [b"vault", charity_pda.key()] -> Vault Account
 
 // Donation PDA
@@ -129,14 +74,9 @@ The application uses PDAs for deterministic account addresses:
 
 ### Account Relationships
 
-```mermaid
-graph LR
-    Authority[Authority Wallet] --> Charity[Charity Account]
-    Charity --> Vault[Vault PDA]
-    Donor[Donor Wallet] --> Donation[Donation Account]
-    Charity --> Donation
-    Vault --> SOL[SOL Balance]
-```
+![Account Relationships Diagram](../assets/account-relationships.png)
+
+The diagram shows how accounts are connected: Authority Wallets create and control Charity Accounts, which link to Vault PDAs that store SOL balances. Donor Wallets create Donation Accounts that reference the receiving charity.
 
 ## Security Architecture
 
