@@ -39,6 +39,7 @@ anchor/programs/charity/src/
 
 Creates a new charity account with associated vault for donations.
 
+**Function signature for creating a new charity:**
 ```rust
 pub fn create_charity(
     ctx: Context<CreateCharity>,
@@ -57,6 +58,7 @@ pub fn create_charity(
 
 Transfers SOL from donor to charity vault.
 
+**Function signature for making a donation:**
 ```rust
 pub fn donate_sol(
     ctx: Context<DonateSol>,
@@ -75,6 +77,7 @@ pub fn donate_sol(
 
 Allows charity authority to withdraw funds.
 
+**Function signature for withdrawing donations:**
 ```rust
 pub fn withdraw_donations(
     ctx: Context<WithdrawDonations>,
@@ -93,6 +96,7 @@ pub fn withdraw_donations(
 
 Toggles donation acceptance for emergency situations.
 
+**Function signature for pausing/unpausing donations:**
 ```rust
 pub fn pause_donations(
     ctx: Context<PauseDonations>,
@@ -104,6 +108,7 @@ pub fn pause_donations(
 
 Allows charity authority to update description.
 
+**Function signature for updating charity information:**
 ```rust
 pub fn update_charity(
     ctx: Context<UpdateCharity>,
@@ -115,6 +120,7 @@ pub fn update_charity(
 
 Removes charity and withdraws remaining funds.
 
+**Function signature for deleting a charity:**
 ```rust
 pub fn delete_charity(
     ctx: Context<DeleteCharity>
@@ -127,6 +133,7 @@ pub fn delete_charity(
 
 The main account storing charity information:
 
+**Charity account structure with all fields and their sizes:**
 ```rust
 #[account]
 pub struct Charity {
@@ -148,6 +155,7 @@ pub struct Charity {
 
 Records individual donation transactions:
 
+**Donation account structure tracking individual contributions:**
 ```rust
 #[account]
 pub struct Donation {
@@ -165,6 +173,7 @@ pub struct Donation {
 
 Deterministic address for charity accounts:
 
+**PDA derivation using authority and charity name as seeds:**
 ```rust
 // Seeds: [b"charity", authority.key(), name.as_bytes()]
 let (charity_pda, bump) = Pubkey::find_program_address(
@@ -181,6 +190,7 @@ let (charity_pda, bump) = Pubkey::find_program_address(
 
 Secure storage for charity donations:
 
+**Vault PDA derived from charity address for secure fund storage:**
 ```rust
 // Seeds: [b"vault", charity_pda.key()]
 let (vault_pda, bump) = Pubkey::find_program_address(
@@ -196,6 +206,7 @@ let (vault_pda, bump) = Pubkey::find_program_address(
 
 Individual donation records:
 
+**Donation PDA using donor, charity, and count for unique addresses:**
 ```rust
 // Seeds: [b"donation", donor.key(), charity.key(), timestamp.to_le_bytes()]
 let (donation_pda, bump) = Pubkey::find_program_address(
@@ -213,6 +224,7 @@ let (donation_pda, bump) = Pubkey::find_program_address(
 
 ### Custom Error Types
 
+**Enum defining all possible program errors with descriptive messages:**
 ```rust
 #[error_code]
 pub enum CustomError {
@@ -232,6 +244,7 @@ pub enum CustomError {
 
 ### Error Propagation
 
+**Example of using require! macro for error checking:**
 ```rust
 // Errors automatically bubble up through the call stack
 pub fn donate_sol(ctx: Context<DonateSol>, amount: u64) -> Result<()> {
@@ -245,6 +258,7 @@ pub fn donate_sol(ctx: Context<DonateSol>, amount: u64) -> Result<()> {
 
 ### Event Definitions
 
+**Struct definitions for events emitted by the program:**
 ```rust
 #[event]
 pub struct CreateCharityEvent {
@@ -266,6 +280,7 @@ pub struct MakeDonationEvent {
 
 ### Event Emission
 
+**Example of emitting an event for off-chain indexing:**
 ```rust
 // Emit events for off-chain indexing
 emit!(CreateCharityEvent {
@@ -280,6 +295,7 @@ emit!(CreateCharityEvent {
 
 ### Test Structure
 
+**Basic test module structure using Tokio async runtime:**
 ```rust
 #[cfg(test)]
 mod tests {
@@ -305,6 +321,7 @@ mod tests {
 
 ### Account Sizing
 
+**Account initialization with precise space calculation:**
 ```rust
 // Precise account sizing to minimize rent
 #[account(
@@ -329,6 +346,7 @@ pub charity: Account<'info, Charity>,
 
 Anchor automatically generates TypeScript client code:
 
+**TypeScript client method call using generated program interface:**
 ```typescript
 // Generated client usage
 const tx = await program.methods
@@ -341,6 +359,7 @@ const tx = await program.methods
 
 ### IDL (Interface Definition Language)
 
+**JSON structure defining program interface for client generation:**
 ```json
 {
   "instructions": [
