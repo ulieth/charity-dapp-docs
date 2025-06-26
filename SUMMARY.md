@@ -19,10 +19,8 @@
 ## Smart Contract
 
 * [Anchor Program](smart-contract/README.md)
-* [Program Structure](smart-contract/structure.md)
 * [Instructions](smart-contract/instructions.md)
 * [State Management](smart-contract/state.md)
-* [PDAs and Accounts](smart-contract/pdas.md)
 * [Testing](smart-contract/testing.md)
 
 ## Frontend Development
